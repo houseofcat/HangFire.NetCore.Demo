@@ -1,3 +1,7 @@
 # HangFire.NetCore.Demo
 
-Demonstrates how to create a client (for generating work), a server (for processing work), the Sql Server (for job tracking), and appSettings.json for a NetCore 2.2+ Console application.
+### Demonstrates How To
+Create a client (for generating work)  
+Create a server (for processing work)  
+Setup A Sql Server (for job tracking)  
+And configure a Console Application to use appSettings.json for connection strings.  
