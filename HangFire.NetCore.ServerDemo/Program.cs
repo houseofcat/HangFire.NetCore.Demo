@@ -4,21 +4,20 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace HangFire.NetCore.ClientDemo
+namespace HangFire.NetCore.ServerDemo
 {
     public class Program
     {
         private static IConfigurationRoot _configuration { get; set; }
+        private static BackgroundJobServer _backgroundJobServer { get; set; }
 
         public static async Task Main(string[] args)
         {
+            AppDomain.CurrentDomain.ProcessExit += new EventHandler(GracefulServerShutdown);
+
             ConfigureApplication();
 
-            await Console.Out.WriteLineAsync("HangFire Client has started. Sending test message...");
-
-            BackgroundJob.Enqueue(() => Console.WriteLine($"Hello TestHost Sever {DateTime.Now}!"));
-
-            await Console.Out.WriteLineAsync("HangFire Client finished its work. Press return to exit...");
+            await Console.Out.WriteLineAsync("HangFire Processing Server has started. Press any key to exit...");
             await Console.In.ReadLineAsync();
         }
 
@@ -34,6 +33,14 @@ namespace HangFire.NetCore.ClientDemo
                 .Configuration
                 .UseColouredConsoleLogProvider()
                 .UseSqlServerStorage(_configuration.GetConnectionString("HangFire"));
+
+            _backgroundJobServer = new BackgroundJobServer();
+        }
+
+        private static void GracefulServerShutdown(object sender, EventArgs e)
+        {
+            _backgroundJobServer.SendStop();
+            _backgroundJobServer.Dispose();
         }
     }
 }
